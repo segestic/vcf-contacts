@@ -2,24 +2,67 @@ import streamlit as st
 import os
 import warnings
 import csv
-
+import pandas as pd
+import pathlib
+import io
+parent_path = pathlib.Path(__file__).parent.parent.resolve()
 
 st.set_page_config(page_title="CSV to VCF", page_icon="🌿", layout='centered', initial_sidebar_state="collapsed")
 
+
+
+# Utils
+import base64 
+import time
+timestr = time.strftime("%Y%m%d-%H%M%S")
+
+
+class FileDownloader(object):
+	
+	def __init__(self, data,filename='myfile',file_ext='txt'):
+		super(FileDownloader, self).__init__()
+		self.data = data
+		self.filename = filename
+		self.file_ext = file_ext
+
+	def download(self):
+		b64 = base64.b64encode(self.data.encode()).decode()
+		new_filename = "{}_{}_.{}".format(self.filename,timestr,self.file_ext)
+		st.markdown("#### Download File ###")
+		href = f'<a href="data:file/{self.file_ext};base64,{b64}" download="{new_filename}">Click Here!!</a>'
+		st.markdown(href,unsafe_allow_html=True)
+
+
 def csvtovcf(input):
-    input=list(csv.reader(open(input,'r'))) 
-    output=open('vcf/con_13.11.22.vcf','w') 
-    for row in input: 
+    #input=list(input) 
+    #input=list(csv.reader(open(input,'r'))) 
+    #input = csv.reader(input)
+    
+    #input1 = io.BytesIO(input.content)
+    #zz = pd.read_csv(input)
+    #for index, row in df.iterrows():
+
+    output=open('vcf_file.vcf','w')
+    #my_text = st.text_area("Your Message") 
+    #with io.BytesIO() as output:
+    for index, row in input.iterrows():
+        #print (row)
         output.write("BEGIN:VCARD\n") 
         output.write("VERSION:3.0\n")
-        output.write("FN:"+row[0]+'.'+row[1]+'.NECF '+ row[2]+"\n") 
-        output.write("N:"+"NECF "+row[2]+";"+row[0]+'.'+row[1]+";;;\n") 
-        output.write("TEL;TYPE=CELL:"+row[3]+"\n")
+        output.write("FN:"+str(row[0])+'.'+str(row[1])+'.NECF '+ str(row[2])+"\n") 
+        output.write("N:"+"NECF "+str(row[2])+";"+str(row[0])+'.'+str(row[1])+";;;\n") 
+        output.write("TEL;TYPE=CELL:"+str(row[3])+"\n")
         output.write("CATEGORIES:"+'Imported on 30/10,myContacts'+"\n") 
-        output.write("END:VCARD\n") 
-    output.close()
-    return 'xyz'
+        output.write("END:VCARD\n")
+    output.close() 
+    #print (output)
+    return output
 
+
+def generate_download_button(csv_data, filename, file_label):
+    st.download_button(label=f"Download {file_label} as CSV",
+                           data=csv_data,
+                           file_name=f"{filename}.vcf")
 
 def main():
     # title
@@ -49,34 +92,49 @@ def main():
         st.subheader(" Find out the most suitable crop to grow in your farm 👨‍🌾")
 
 
-        csv_file = st.file_uploader("Upload Csv", type=["csv"])
+        csv_file = st.file_uploader("Upload CSV", type=["csv"])
 
     if csv_file is not None:
 		# To See details
         file_details = {"filename":csv_file.name, "filetype":csv_file.type,
                               "filesize":csv_file.size}
         st.write(file_details)
+        file_container = st.expander("Check your uploaded .csv")
+        df = pd.read_csv(csv_file)
+        csv_file.seek(0)
+        file_container.write(df)
 
-        # To View Uploaded Image
-        N = st.number_input("Nitrogen", 1,10000)
-        P = st.number_input("Phosporus", 1,10000)
-        K = st.number_input("Potassium", 1,10000)
-        temp = st.number_input("Temperature",0.0,100000.0)
-        humidity = st.number_input("Humidity in %", 0.0,100000.0)
-        ph = st.number_input("Ph", 0.0,100000.0)
-        rainfall = st.number_input("Rainfall in mm",0.0,100000.0)
-
-        feature_list = [N, P, K, temp, humidity, ph, rainfall]
-        single_pred = np.array(feature_list).reshape(1,-1)
-        
-        if st.button('Predict'):
-
-            loaded_model = load_model('model.pkl')
-            prediction = loaded_model.predict(single_pred)
+        #Read CSV FIle...
+        if st.button('Convert'):
+            process = False
+            process = csvtovcf(df)
             col1.write('''
 		    ## Results 🔍 
 		    ''')
-            col1.success(f"{prediction.item().title()} are recommended by the A.I for your farm.")
+            col1.success("sussucefully converted, You can click on download button to download ")
+            
+            if process:
+                data_path = os.path.join(parent_path, "vcf_file.vcf'")
+                #with open('vcf_file.vcf', 'w') as f:
+                generate_download_button(csv_data=data_path, filename="abc", file_label="mag")
+                down = st.button("Download")
+                			  #Saving upload
+                with open('vcf_file.vcf') as f:
+                    #f.write((image_file)
+                    f.download()
+                    #st.write(process)
+                #st.download_button('Download 4vcf', process) 
+                print ('Finished processng....')
+                # if down:
+                #     download = FileDownloader(process).download()
+                #     #st.download_button('Download vcf', download) 
+                # #df = pd.read_csv("iris.csv")
+                #st.dataframe(df)
+                    #download = FileDownloader(process.to_csv(),file_ext='vcf').download()
+                    #st.write(process)
+
+                    #download = FileDownloader(process).download()
+
       #code for html ☘️ 🌾 🌳 👨‍🌾  🍃
 
     st.warning("Note: This A.I application is for educational/demo purposes only and cannot be relied upon. Check the source code [here](https://github.com/gabbygab1233/Crop-Recommendation)")
