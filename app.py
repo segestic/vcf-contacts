@@ -17,34 +17,10 @@ import time
 timestr = time.strftime("%Y%m%d-%H%M%S")
 
 
-class FileDownloader(object):
-	
-	def __init__(self, data,filename='myfile',file_ext='txt'):
-		super(FileDownloader, self).__init__()
-		self.data = data
-		self.filename = filename
-		self.file_ext = file_ext
-
-	def download(self):
-		b64 = base64.b64encode(self.data.encode()).decode()
-		new_filename = "{}_{}_.{}".format(self.filename,timestr,self.file_ext)
-		st.markdown("#### Download File ###")
-		href = f'<a href="data:file/{self.file_ext};base64,{b64}" download="{new_filename}">Click Here!!</a>'
-		st.markdown(href,unsafe_allow_html=True)
-
-
-def csvtovcf(input):
-    #input=list(input) 
-    #input=list(csv.reader(open(input,'r'))) 
-    #input = csv.reader(input)
-    
-    #input1 = io.BytesIO(input.content)
-    #zz = pd.read_csv(input)
-    #for index, row in df.iterrows():
-
-    output=open('vcf_file.vcf','w')
-    #my_text = st.text_area("Your Message") 
-    #with io.BytesIO() as output:
+def csvtovcf(input, filename):
+    #csv_file.name
+    #output=open('vcf_file.vcf','w')
+    output=open(f'{filename}.vcf','w') #f'{fn}.jpg'
     for index, row in input.iterrows():
         #print (row)
         output.write("BEGIN:VCARD\n") 
@@ -55,14 +31,9 @@ def csvtovcf(input):
         output.write("CATEGORIES:"+'Imported on 30/10,myContacts'+"\n") 
         output.write("END:VCARD\n")
     output.close() 
-    #print (output)
     return output
 
 
-def generate_download_button(csv_data, filename, file_label):
-    st.download_button(label=f"Download {file_label} as CSV",
-                           data=csv_data,
-                           file_name=f"{filename}.vcf")
 
 def main():
     # title
@@ -78,18 +49,16 @@ def main():
     with col1: 
         with st.expander(" ℹ️ Information", expanded=True):
             st.write("""
-            CSV to VCF is one of the most important aspects of precision agriculture. Crop recommendations are based on a number of factors. Precision agriculture seeks to define these criteria on a site-by-site basis in order to address crop selection issues. While the "site-specific" methodology has improved performance, there is still a need to monitor the systems' outcomes.Precision agriculture systems aren't all created equal. 
-            However, in agriculture, it is critical that the recommendations made are correct and precise, as errors can result in significant material and capital loss.
-
+            CSV to VCF is an automated way to convert a csv file to a vcf file. Customized to meet NECF(https://necf.church) needs. The generated contact (vcf file) is then uploaded on contact. 
             """)
         '''
         ## How does it work ❓ 
-        Complete all the parameters and the machine learning model will predict the most suitable crops to grow in a particular farm based on various parameters
+        Upload csv file and click convert. File will be converted to vcf.
         '''
 
 
     with col2:
-        st.subheader(" Find out the most suitable crop to grow in your farm 👨‍🌾")
+        st.subheader(" Automate the Generation of VCf contacts from CSV file👨‍🌾")
 
 
         csv_file = st.file_uploader("Upload CSV", type=["csv"])
@@ -107,37 +76,29 @@ def main():
         #Read CSV FIle...
         if st.button('Convert'):
             process = False
-            process = csvtovcf(df)
+            process = csvtovcf(df, csv_file.name)
+            #process = csvtovcf(f'{df}.vcf')
             col1.write('''
 		    ## Results 🔍 
 		    ''')
             col1.success("sussucefully converted, You can click on download button to download ")
             
             if process:
-                data_path = os.path.join(parent_path, "vcf_file.vcf'")
-                #with open('vcf_file.vcf', 'w') as f:
-                generate_download_button(csv_data=data_path, filename="abc", file_label="mag")
-                down = st.button("Download")
-                			  #Saving upload
-                with open('vcf_file.vcf') as f:
-                    #f.write((image_file)
-                    f.download()
-                    #st.write(process)
-                #st.download_button('Download 4vcf', process) 
-                print ('Finished processng....')
-                # if down:
-                #     download = FileDownloader(process).download()
-                #     #st.download_button('Download vcf', download) 
-                # #df = pd.read_csv("iris.csv")
-                #st.dataframe(df)
-                    #download = FileDownloader(process.to_csv(),file_ext='vcf').download()
-                    #st.write(process)
+                #data_path = os.path.join(parent_path, "vcf_file.vcf'")
+                #with open('vcf_file.vcf', 'rb') as f:
+                    #st.download_button('Download VCF', f, file_name='vcf_file.vcf')
+                with open(f'{csv_file.name}.vcf', 'rb') as f:
+                    st.download_button('Download VCF', f, file_name=f'{csv_file.name}.vcf') 
 
-                    #download = FileDownloader(process).download()
+                    if st.download_button(...):
+                        st.write('Thanks for downloading!')                             
+ 
+                print ('Finished processng....')
+
 
       #code for html ☘️ 🌾 🌳 👨‍🌾  🍃
 
-    st.warning("Note: This A.I application is for educational/demo purposes only and cannot be relied upon. Check the source code [here](https://github.com/gabbygab1233/Crop-Recommendation)")
+    st.warning("Note: This application is customized for NECF (https://necf.church) use for bulk conversion of members csv contacts file. ")
     hide_menu_style = """
     <style>
     #MainMenu {visibility: hidden;}

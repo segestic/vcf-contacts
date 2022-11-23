@@ -187,13 +187,32 @@ def csvtovcf(input):
 
     output = open('con_13.11.22.vcf','w') 
 
-	for row in input: 
-		output.write("BEGIN:VCARD\n") 
-		output.write("VERSION:3.0\n")
-		output.write("FN:"+row[0]+'.'+row[1]+'.NECF '+ row[2]+"\n") 
-		output.write("N:"+"NECF "+row[2]+";"+row[0]+'.'+row[1]+";;;\n") 
-		output.write("TEL;TYPE=CELL:"+row[3]+"\n")
-		output.write("CATEGORIES:"+'Imported on 30/10,myContacts'+"\n") 
-		output.write("END:VCARD\n") 
-	#output.close()
-		return 'xyz'	
+for row in input: 
+    output.write("BEGIN:VCARD\n") 
+    output.write("VERSION:3.0\n")
+    output.write("FN:"+row[0]+'.'+row[1]+'.NECF '+ row[2]+"\n") 
+    output.write("N:"+"NECF "+row[2]+";"+row[0]+'.'+row[1]+";;;\n") 
+    output.write("TEL;TYPE=CELL:"+row[3]+"\n")
+    output.write("CATEGORIES:"+'Imported on 30/10,myContacts'+"\n") 
+    output.write("END:VCARD\n") 
+    #output.close()
+    return 'xyz'	
+
+
+    generate_download_button(csv_data=data_path, filename="abc", file_label="mag")
+    down = st.button("Download")
+    #Saving upload
+
+def download2(fn):
+    print("Download request recieved")
+    data_path = os.path.join(parent_path, "vcf_file.vcf")
+    #st.download_button('Download CSV', text_contents, 'text/csv')
+    #return (data_path, as_attachment=True, mimetype="csv")
+    with open('vcf_file.vcf', 'rb') as f:
+        st.download_button('Download vcc', f, file_name='vcf_file.vcf')
+
+
+def generate_download_button(csv_data, filename, file_label):
+    st.download_button(label=f"Download {file_label} as CSV",
+                           data=csv_data,
+                           file_name=f"{filename}.vcf")
