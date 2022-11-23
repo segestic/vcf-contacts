@@ -90,8 +90,8 @@ def main():
                 with open(f'{csv_file.name}.vcf', 'rb') as f:
                     st.download_button('Download VCF', f, file_name=f'{csv_file.name}.vcf') 
 
-                    if st.download_button(...):
-                        st.write('Thanks for downloading!')                             
+                    # if st.download_button(...):
+                    #     st.write('Thanks for downloading!')                             
  
                 print ('Finished processng....')
 
