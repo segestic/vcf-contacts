@@ -58,7 +58,7 @@ def main():
 
 
     with col2:
-        st.subheader(" Automate the Generation of VCf contacts from CSV file👨‍🌾")
+        st.subheader("Automate the Generation of VCf contacts from CSV file👨‍🌾")
 
 
         csv_file = st.file_uploader("Upload CSV", type=["csv"])
