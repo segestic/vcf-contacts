@@ -1,5 +1,5 @@
 # 📖 CSV to VCF Contacts App
-Streamlit app for brainTumor prediction
+Streamlit app for Bulk Conversion of CSV to VCF - customized for Necf
 
 
 ## Installation
