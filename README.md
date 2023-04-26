@@ -9,5 +9,6 @@ Streamlit app for Bulk Conversion of CSV to VCF - customized for Necf
 * Activate the virtual environment - `venv\scripts\activate` 
 * Install the requirements - `pip install -r requirements.txt`
 * Run the app using - `streamlit run app.py`
+* Sample CSV file to test conversion - `CSV_format.csv`
 ### Optional
 * Run API using - `uvicorn application.server.main:app`
