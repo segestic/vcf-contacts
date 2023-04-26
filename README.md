@@ -1,4 +1,4 @@
-# 📖 CSV to VCFContacts App
+# 📖 CSV to VCF Contacts App
 Streamlit app for brainTumor prediction
 
 
